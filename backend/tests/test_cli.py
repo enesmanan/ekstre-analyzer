@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -6,11 +7,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _run(*args: str) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
     return subprocess.run(
         [sys.executable, str(ROOT / "cli.py"), *args],
         cwd=ROOT,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        env=env,
     )
 
 

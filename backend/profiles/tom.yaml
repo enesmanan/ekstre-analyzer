@@ -1,0 +1,30 @@
+bank: tom
+version: 1
+detect:
+  any:
+    - tombank
+    - Katılım
+mask:
+  builtin: [iban, card_number, tckn, phone, email]
+  regex:
+    - name: card_label
+      pattern: 'Kart Numarası\s*:?\s*(.+)$'
+      group: 1
+    - name: name_line
+      pattern: '^(Sayın|Adı Soyadı)\s*:?\s*(.+)$'
+      group: 2
+    - name: allcaps_name
+      pattern: '^\s*([A-ZÇĞİÖŞÜ]{2,}(?:\s+[A-ZÇĞİÖŞÜ]{2,}){1,2})\s*$'
+      group: 1
+    - name: long_ref
+      pattern: '\b\d{8,}\b'
+      group: 0
+keep:
+  - 'İşlem Tarihi'
+  - 'Toplam'
+  - 'Tutar \(TL\)'
+  - 'Ekstre Kesim Tarihi'
+  - 'Son Ödeme Tarihi'
+  - 'Kart Limiti'
+  - 'Asgari Ödeme Tutarı'
+padding_pt: 1.0

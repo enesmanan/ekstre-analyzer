@@ -18,6 +18,16 @@ def test_generic_schema_and_empty_detect() -> None:
     assert len(generic_only) == 1
 
 
+def test_tom_schema() -> None:
+    profile = load_profile(PROFILES / "tom.yaml")
+    assert profile.bank == "tom"
+    assert profile.detect.any
+    assert "long_digits" not in profile.mask.builtin
+    loaded = load_all_profiles(PROFILES)
+    empty_detect = [p for p in loaded if not p.detect.any]
+    assert [p.bank for p in empty_detect] == ["generic"]
+
+
 def test_extra_term_word_boundary() -> None:
     pattern = extra_term_pattern("  Market  ")
     assert r"Market" in pattern

@@ -71,23 +71,26 @@ def leak_scan(
                         captured = match.group(spec.group) if spec.group else match.group(0)
                         if captured and captured.strip():
                             findings.append(Finding(spec.name, page_index, _snippet(captured)))
-            for match in re.finditer(r"(?<!\d)(?:\d[\s-]?){13,19}(?!\d)", text):
+            for match in re.finditer(r"(?<!\d)(?:\d[\s-]?){13,16}(?!\d)", text):
                 compact = re.sub(r"[\s-]", "", match.group(0))
-                if compact.isdigit() and 13 <= len(compact) <= 19 and luhn_ok(compact):
+                if compact.isdigit() and 13 <= len(compact) <= 16 and luhn_ok(compact):
                     findings.append(Finding("luhn", page_index, _snippet(compact)))
             for line in text.splitlines():
+                stripped = line.strip()
                 for match in LONG_DIGITS_RE.finditer(line):
                     token = match.group(0)
-                    if DATE_RE.search(token) or DATE_RE.search(line):
-                        if DATE_RE.search(line) and token in "".join(DATE_RE.findall(line)):
-                            continue
+                    if DATE_RE.search(line) and token in "".join(DATE_RE.findall(line)):
+                        continue
                     if AMOUNT_RE.search(line):
+                        continue
+                    if re.fullmatch(r"20\d{6}", token):
                         continue
                     findings.append(Finding("long_digits", page_index, _snippet(token)))
                 if AMOUNT_RE.search(line):
                     continue
-                for match in ALLCAPS_RUN.finditer(line):
-                    findings.append(Finding("name_heuristic", page_index, _snippet(match.group(0))))
+                words = stripped.split()
+                if 2 <= len(words) <= 3 and all(re.fullmatch(r"[A-ZÇĞİÖŞÜ]{2,}", w) for w in words):
+                    findings.append(Finding("name_heuristic", page_index, _snippet(stripped)))
             for match in AT_TOKEN.finditer(text):
                 findings.append(Finding("email_heuristic", page_index, _snippet(match.group(0))))
         full = "\n".join(full_text_parts)
