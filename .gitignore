@@ -11,6 +11,12 @@ sample_ekstre/
 backend/tests/private/
 backend/tests/out/
 
+# No PDF in git except the committed synthetic fixture
+*.pdf
+!backend/tests/fixtures/synthetic.pdf
+tom.pdf
+tom-*.pdf
+
 # Python
 __pycache__/
 .pytest_cache/

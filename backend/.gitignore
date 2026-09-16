@@ -1,5 +1,7 @@
 tests/private/
 tests/out/
+*.pdf
+!tests/fixtures/synthetic.pdf
 .venv/
 __pycache__/
 .pytest_cache/
