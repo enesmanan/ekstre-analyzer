@@ -65,14 +65,25 @@ def create_app(
     application.state.maintenance = maint
     application.state.env = app_env
     application.state.database_path = db_path
+    from app.api.body_limit import JsonBodyLimitMiddleware
+    from app.api.statements import router as statements_router
+    from app.api.transactions import router as transactions_router
+    from app.jobs import JobStore, mark_restart
+
     register_exception_handlers(application)
     application.add_middleware(SecurityHeadersMiddleware)
+    application.add_middleware(JsonBodyLimitMiddleware)
+    application.state.jobs = JobStore()
+    application.state.mark_restart = mark_restart
 
     @application.get("/api/healthz")
     def healthz(request: Request) -> JSONResponse:
         with request.app.state.engine.connect() as conn:
             conn.execute(text("SELECT 1"))
         return JSONResponse({"ok": True})
+
+    application.include_router(statements_router, prefix="/api/v1")
+    application.include_router(transactions_router, prefix="/api/v1")
 
     application.frontend(
         "/",
