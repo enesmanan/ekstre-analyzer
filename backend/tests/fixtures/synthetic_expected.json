@@ -1,0 +1,10 @@
+{
+  "iban": "TR33 0006 1005 1978 6457 8413 26",
+  "card_number": "4242 4242 4242 4242",
+  "tckn": "10000000146",
+  "name": "Ayse Yilmaz",
+  "phone": "0532 111 22 33",
+  "email": "ayse@example.com",
+  "address": "Ornek Mah. Test Sok. No 1 Ankara",
+  "customer_no": "12345678"
+}
