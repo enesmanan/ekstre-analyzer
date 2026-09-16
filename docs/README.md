@@ -12,7 +12,7 @@ Bu klasör tek indeks buradadır; başka yerde liste tutulmaz. Dosya adları ASC
 
 | Faz | Dosya | Durum | Son güncelleme |
 |---|---|---|---|
-| 1 | [phases/faz-1-masking.md](phases/faz-1-masking.md) | uygulanıyor | 2026-09-16 |
+| 1 | [phases/faz-1-masking.md](phases/faz-1-masking.md) | bitti | 2026-09-16 |
 | 2 | [phases/faz-2-extraction-sqlite.md](phases/faz-2-extraction-sqlite.md) | onaylı | 2026-09-16 |
 | 3 | [phases/faz-3-dashboard.md](phases/faz-3-dashboard.md) | onaylı | 2026-09-16 |
 | 3.5 | [phases/faz-3.5-ai-advice.md](phases/faz-3.5-ai-advice.md) | onaylı | 2026-09-16 |

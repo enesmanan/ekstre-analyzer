@@ -2,7 +2,7 @@
 
 | Durum | Tarih | Süre tahmini | Bağımlılık |
 |---|---|---|---|
-| uygulanıyor | 2026-09-16 | 1,5 hafta | yok |
+| bitti | 2026-09-16 | 1,5 hafta | yok |
 
 Önceki: — · Sonraki: [Faz 2](faz-2-extraction-sqlite.md) · İlgili ADR: [ADR-0003](../decisions/0003-pymupdf-redaction.md), [ADR-0002](../decisions/0002-pdf-native-input-no-png.md)
 
@@ -17,9 +17,9 @@ Elindeki gerçek banka ekstresini komut satırından güvenli şekilde maskeleme
 
 ## 3. Ön koşullar
 
-- [ ] Python 3.13 ve `uv` kurulu (`uv --version` ≥ 0.12)
-- [ ] Geliştiricinin kendi TOM Bank ekstresi `backend/tests/private/tom.pdf` (klasör `.gitignore`'da). v1'in tek hedef bankası TOM'dur; tüm fazlar bu ekstre üzerinden doğrulanır.
-- [ ] TOM ekstresi şifreliyse şifre biliniyor; şifre hiçbir dosyaya yazılmaz
+- [x] Python 3.13 ve `uv` kurulu (`uv --version` ≥ 0.12)
+- [x] Geliştiricinin kendi TOM Bank ekstresi `backend/tests/private/tom.pdf` (klasör `.gitignore`'da). v1'in tek hedef bankası TOM'dur; tüm fazlar bu ekstre üzerinden doğrulanır.
+- [x] TOM ekstresi şifreliyse şifre biliniyor; şifre hiçbir dosyaya yazılmaz
 
 ## 4. Teslimatlar
 
@@ -125,44 +125,44 @@ Ayrıca `render` ile PNG üretilip elle bakılır; kabul için zorunlu.
 
 ## 6. Görevler
 
-Format: `- [ ] F1-TXX [P] Açıklama — dosya`. Her görevin altında doğrulama komutu. Komutlar `backend/` içinden çalıştırılır.
+Format: `- [x] F1-TXX [P] Açıklama — dosya`. Her görevin altında doğrulama komutu. Komutlar `backend/` içinden çalıştırılır.
 
 ### 6.1 Kurulum
 
-- [ ] F1-T01 uv projesi, bağımlılıklar, `.gitignore` (`tests/private/`, `tests/out/`) — `backend/pyproject.toml`
+- [x] F1-T01 uv projesi, bağımlılıklar, `.gitignore` (`tests/private/`, `tests/out/`) — `backend/pyproject.toml`
       Doğrula: `uv sync && uv run python -c "import pymupdf, typer, yaml, pydantic; print(pymupdf.version)"`
       Komutlar: `uv init --python 3.13 && uv add pymupdf typer pyyaml pydantic && uv add --dev pytest`
-- [ ] F1-T02 [P] Sentetik ekstre üretici (`TextWriter` + `Font("helv")`, Türkçe karakterler doğru; `--password` ile `save(encryption=pymupdf.PDF_ENCRYPT_AES_256, user_pw=...)`) — `backend/tests/fixtures/make_statement.py`
+- [x] F1-T02 [P] Sentetik ekstre üretici (`TextWriter` + `Font("helv")`, Türkçe karakterler doğru; `--password` ile `save(encryption=pymupdf.PDF_ENCRYPT_AES_256, user_pw=...)`) — `backend/tests/fixtures/make_statement.py`
       Doğrula: `uv run python tests/fixtures/make_statement.py -o tests/fixtures/synthetic.pdf && uv run python -c "import pymupdf; d=pymupdf.open('tests/fixtures/synthetic.pdf'); print(d.page_count, 'Müşteri No' in d[0].get_text())"` → `3 True`. Üretici bilinen değerleri `tests/fixtures/synthetic_expected.json` içine yazar (IBAN, kart, TCKN, ad, telefon, e-posta, adres).
 
 ### 6.2 Çekirdek
 
-- [ ] F1-T03 [P] Built-in desenler + TCKN checksum + Luhn — `backend/app/anonymizer/patterns.py`
+- [x] F1-T03 [P] Built-in desenler + TCKN checksum + Luhn — `backend/app/anonymizer/patterns.py`
       Doğrula: `uv run pytest tests/test_patterns.py -q` (pozitif/negatif örnekler: boşluklu IBAN, `4XXX XXXX XXXX 1234`, geçerli/geçersiz TCKN, tutar `1.234,56` eşleşmemeli)
-- [ ] F1-T04 [P] Profil şeması ve yükleyici, banka tespiti — `backend/app/anonymizer/profile.py`, `backend/profiles/generic.yaml`
+- [x] F1-T04 [P] Profil şeması ve yükleyici, banka tespiti — `backend/app/anonymizer/profile.py`, `backend/profiles/generic.yaml`
       Doğrula: `uv run pytest tests/test_profile.py -q`
-- [ ] F1-T05 Satır modeli (`rawdict`, karakter bbox'ları, `TOOLS.set_small_glyph_heights(True)` import anında) — `backend/app/anonymizer/layout.py`
+- [x] F1-T05 Satır modeli (`rawdict`, karakter bbox'ları, `TOOLS.set_small_glyph_heights(True)` import anında) — `backend/app/anonymizer/layout.py`
       Doğrula: `uv run pytest tests/test_layout.py -q` (sentetik PDF'te IBAN satırı tek `Line` olarak geliyor, karakter sayısı satır metni uzunluğuna eşit; 12 pt aralıklı komşu satır redaksiyonda korunuyor)
-- [ ] F1-T06 Sanitizasyon kontrolleri ve scrub — `backend/app/anonymizer/sanitize.py`
+- [x] F1-T06 Sanitizasyon kontrolleri ve scrub — `backend/app/anonymizer/sanitize.py`
       Doğrula: `uv run pytest tests/test_sanitize.py -q` (gömülü dosyalı ve JS'li fixture reddediliyor)
-- [ ] F1-T07 Maskeleme — `backend/app/anonymizer/masker.py`
+- [x] F1-T07 Maskeleme — `backend/app/anonymizer/masker.py`
       Doğrula: `uv run pytest tests/test_masker.py -q` (sentetik ekstre: `synthetic_expected.json` içindeki hiçbir değer çıktı metninde yok; işlem satırlarındaki tutarlar ve tarihler duruyor; sayfa sayısı aynı)
-- [ ] F1-T08 Sızıntı testi — `backend/app/anonymizer/verify.py`
+- [x] F1-T08 Sızıntı testi — `backend/app/anonymizer/verify.py`
       Doğrula: `uv run pytest tests/test_verify.py -q` (maskelenmemiş sentetik ekstrede ≥ 6 bulgu, maskelenmişte 0)
-- [ ] F1-T09 CLI: mask / inspect / verify / render — `backend/cli.py`
+- [x] F1-T09 CLI: mask / inspect / verify / render — `backend/cli.py`
       Doğrula (Git Bash): `uv run cli.py mask tests/fixtures/synthetic.pdf -o tests/out/masked.pdf && uv run cli.py verify tests/out/masked.pdf; echo $?` → 0. PowerShell'de `;` ile ayırıp `$LASTEXITCODE` oku.
-- [ ] F1-T10 Şifreli PDF desteği (fixture: `make_statement.py --password 12345678901`) — `masker.py`, `cli.py`
+- [x] F1-T10 Şifreli PDF desteği (fixture: `make_statement.py --password 12345678901`) — `masker.py`, `cli.py`
       Doğrula: `uv run pytest tests/test_masker.py -q -k password`
-- [ ] F1-T11 TOM profili: önce `uv run cli.py inspect tests/private/tom.pdf` ile başlık/etiket satırlarını çıkar, sonra `detect`, `mask.regex`, `keep` yaz — `backend/profiles/tom.yaml`
+- [x] F1-T11 TOM profili: önce `uv run cli.py inspect tests/private/tom.pdf` ile başlık/etiket satırlarını çıkar, sonra `detect`, `mask.regex`, `keep` yaz — `backend/profiles/tom.yaml`
       Doğrula: `uv run cli.py mask tests/private/tom.pdf -o tests/out/tom-masked.pdf --profile tom && uv run cli.py verify tests/out/tom-masked.pdf --profile tom --expect-absent tests/private/absent.txt` → 0, ardından `render` ile göz kontrolü; `inspect` çıktısı ve `absent.txt` commit edilmez
-- [ ] F1-T12 [P] Profil şeması testi — `backend/tests/test_profile.py`
+- [x] F1-T12 [P] Profil şeması testi — `backend/tests/test_profile.py`
       Doğrula: `uv run pytest tests/test_profile.py -q` (`tom.yaml` ve `generic.yaml` şema doğrulamasını geçiyor; `detect` boş profil yalnızca `generic`)
 
 ### 6.3 Kapanış
 
-- [ ] F1-T13 Performans ölçümü — `tests/test_perf.py`
+- [x] F1-T13 Performans ölçümü — `tests/test_perf.py`
       Doğrula: 10 sayfalık sentetik ekstre `mask` < 2 sn (`uv run pytest tests/test_perf.py -q`)
-- [ ] F1-T14 Bu dosyada Durum → bitti, changelog satırı; `docs/README.md` faz tablosunu güncelle
+- [x] F1-T14 Bu dosyada Durum → bitti, changelog satırı; `docs/README.md` faz tablosunu güncelle
 
 ## 7. Kabul kriterleri
 
@@ -187,9 +187,9 @@ Format: `- [ ] F1-TXX [P] Açıklama — dosya`. Her görevin altında doğrulam
 ## 9. Açık sorular
 
 - Karar: tek banka TOM (2026-09-16); ek profil yok.
-- [NETLEŞTİRİLMELİ: TOM ekstresi kart mı hesap ekstresi mi (katılım bankası; muhtemelen hesap); `inspect` çıktısına göre profil `statement_type` alanı ve "toplam" satırı regex'i belirlenir]
-- [NETLEŞTİRİLMELİ: TOM ekstresi şifreli mi; şifre formatı]
-- [NETLEŞTİRİLMELİ: `long_digits` mask'ta varsayılan açık mı? Açıksa hesap numaraları gider ama bazı referans numaraları da silinir]
+- TOM örneği kart ekstresi (etiketler: Kart Numarası, Asgari Ödeme, Ekstre Kesim / Son Ödeme). `statement_type` şema alanı eklenmedi; Faz 2 toplam satırı `Ekstre Borcu` / `Tutar (TL)` üzerinden gider.
+- TOM PDF `needs_pass=False` (şifresiz).
+- `long_digits` mask `builtin` listesinde yok; TOM profili sızıntı taramasının geçmesi için `long_ref` (`\b\d{8,}\b`) regex'ini açıkça ister.
 
 ## 10. Referanslar
 
@@ -205,3 +205,4 @@ Format: `- [ ] F1-TXX [P] Açıklama — dosya`. Her görevin altında doğrulam
 - 2026-09-16 taslak oluşturuldu (monolit plandan bölündü; şifreli PDF, sentetik fixture, generic profil, bağımsız sızıntı sezgileri, scrub eklendi)
 - 2026-09-16 kapsam kararı: tek hedef banka TOM; iki ek banka taslağı kaldırıldı, F1-T12 profil şema testi oldu
 - 2026-09-16 doğrulama turu 1: kart/telefon/TCKN regex sınırları, `TOOLS` adı, `rawdict` karakter bbox'ları, JS tespit kuralı (düz OpenAction reddedilmez), fixture font notu, KK-4 grep düzeltildi
+- 2026-09-16 Faz 1 bitti: CLI mask/inspect/verify/render, sentetik+şifreli fixture, TOM kart ekstresi profili (L4), KK-1..KK-7

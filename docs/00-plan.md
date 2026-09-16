@@ -18,7 +18,7 @@ Mimari ve teknoloji seçimleri: [01-architecture.md](01-architecture.md). Kararl
 
 | Faz | Dosya | Amaç | Süre | Durum |
 |---|---|---|---|---|
-| 1 | [faz-1-masking.md](phases/faz-1-masking.md) | CLI maskeleme, profil, sızıntı testi, sentetik fixture | 1,5 hafta | onaylı |
+| 1 | [faz-1-masking.md](phases/faz-1-masking.md) | CLI maskeleme, profil, sızıntı testi, sentetik fixture | 1,5 hafta | bitti |
 | 2 | [faz-2-extraction-sqlite.md](phases/faz-2-extraction-sqlite.md) | Gemini çıkarım, doğrulama katmanı, SQLite | 1,5 hafta | onaylı |
 | 3 | [faz-3-dashboard.md](phases/faz-3-dashboard.md) | HTTP API + React dashboard | 3 hafta | onaylı |
 | 3.5 | [faz-3.5-ai-advice.md](phases/faz-3.5-ai-advice.md) | Agregat tabanlı AI öneri | 4 gün | onaylı |
