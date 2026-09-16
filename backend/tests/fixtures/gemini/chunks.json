@@ -1,0 +1,12 @@
+{
+  "chunks": [
+    {
+      "output_text": "{\"bank\":\"generic\",\"statement_type\":\"account\",\"period_start\":\"2026-09-01\",\"period_end\":\"2026-09-30\",\"stated_total_debit_kurus\":5000,\"transactions\":[{\"txn_date\":\"2026-09-01\",\"description\":\"Coffee\",\"amount_kurus\":1000,\"direction\":\"debit\",\"category\":\"restoran_kafe\",\"merchant_norm\":\"COFFEE\",\"is_installment\":false,\"installment_no\":null,\"installment_total\":null,\"confidence\":0.9},{\"txn_date\":\"2026-09-01\",\"description\":\"Coffee\",\"amount_kurus\":1000,\"direction\":\"debit\",\"category\":\"restoran_kafe\",\"merchant_norm\":\"COFFEE\",\"is_installment\":false,\"installment_no\":null,\"installment_total\":null,\"confidence\":0.9},{\"txn_date\":\"2026-09-02\",\"description\":\"Market A\",\"amount_kurus\":2000,\"direction\":\"debit\",\"category\":\"market\",\"merchant_norm\":\"MARKET\",\"is_installment\":false,\"installment_no\":null,\"installment_total\":null,\"confidence\":0.9}]}",
+      "usage": {"total_input_tokens": 100, "total_output_tokens": 40, "total_thought_tokens": 5}
+    },
+    {
+      "output_text": "{\"bank\":\"generic\",\"statement_type\":\"account\",\"period_start\":\"2026-09-01\",\"period_end\":\"2026-09-30\",\"stated_total_debit_kurus\":5000,\"transactions\":[{\"txn_date\":\"2026-09-01\",\"description\":\"Coffee\",\"amount_kurus\":1000,\"direction\":\"debit\",\"category\":\"restoran_kafe\",\"merchant_norm\":\"COFFEE\",\"is_installment\":false,\"installment_no\":null,\"installment_total\":null,\"confidence\":0.9},{\"txn_date\":\"2026-09-03\",\"description\":\"Market B\",\"amount_kurus\":1000,\"direction\":\"debit\",\"category\":\"market\",\"merchant_norm\":\"MARKET\",\"is_installment\":false,\"installment_no\":null,\"installment_total\":null,\"confidence\":0.9}]}",
+      "usage": {"total_input_tokens": 80, "total_output_tokens": 30, "total_thought_tokens": 4}
+    }
+  ]
+}
