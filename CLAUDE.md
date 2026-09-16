@@ -52,7 +52,7 @@ Doğrulama komutları Git Bash sözdizimindedir. Bu makinede varsayılan kabuk P
 
 ## Yol kapsamlı kurallar
 
-- `frontend/**`: `.claude/rules/frontend.md` (Faz 3'te eklenir: ADR-0007 tasarım kuralları, `react-router` import yolları, CSP uyumu).
+- `frontend/**`: `.claude/rules/frontend.md` (ADR-0007 tasarım kuralları, `react-router` import yolları, CSP uyumu, ham gövde upload).
 - `backend/app/anonymizer/**`: PyMuPDF `rawdict`, `TOOLS.set_small_glyph_heights(True)`, `apply_redactions(images=PDF_REDACT_IMAGE_NONE, graphics=PDF_REDACT_LINE_ART_NONE)`; `search_for` regex için kullanılmaz.
 - `backend/app/auth/**`: PyJWT `sub=str(id)`, `require` claim'leri; rate limit IP anahtarı `X-Forwarded-For` **son** girdisi.
 - `Dockerfile`, `infra/**`: Litestream 0.5 sözdizimi (tekil `replica`, global `snapshot`), `shutdown-sync-timeout: 4s`; deploy `--no-traffic --tag canary` + bakım bayrağı runbook'u.
