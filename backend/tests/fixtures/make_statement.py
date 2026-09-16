@@ -16,7 +16,7 @@ EXPECTED = {
     "phone": "0532 111 22 33",
     "email": "ayse@example.com",
     "address": "Ornek Mah. Test Sok. No 1 Ankara",
-    "customer_no": "12345678",
+    "customer_no": "1234567",
 }
 
 FONT_SIZE = 10
@@ -58,11 +58,12 @@ def build_pdf(pages: int = 3) -> pymupdf.Document:
     _write_line(page, y, "İşlem Tarihi    Açıklama              Tutar", font)
     y += LINE_H
 
-    txn_count = 30 if pages <= 3 else max(30, (pages - 1) * 20)
-    txns_per_page = 12
+    txn_count = 30 if pages <= 3 else max(30, (pages - 1) * 18)
     txn_idx = 0
     while txn_idx < txn_count:
         if y > 780:
+            if doc.page_count >= pages:
+                break
             page = doc.new_page()
             y = 50
             _write_line(page, y, "İşlem Tarihi    Açıklama              Tutar", font)
@@ -73,11 +74,6 @@ def build_pdf(pages: int = 3) -> pymupdf.Document:
         _write_line(page, y, f"{day:02d}/09/2026    {merchant:<20} {amount}", font)
         y += LINE_H
         txn_idx += 1
-        if txn_idx % txns_per_page == 0 and txn_idx < txn_count and page.number + 1 < pages:
-            page = doc.new_page()
-            y = 50
-            _write_line(page, y, "İşlem Tarihi    Açıklama              Tutar", font)
-            y += LINE_H
 
     while doc.page_count < pages:
         extra = doc.new_page()
