@@ -22,6 +22,18 @@ __pycache__/
 .pytest_cache/
 *.pyc
 
+# SQLite databases (never commit)
+*.db
+*.db-wal
+*.db-shm
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Production SPA copy served by FastAPI
+backend/static/
+
 # OS / editor
 .DS_Store
 Thumbs.db

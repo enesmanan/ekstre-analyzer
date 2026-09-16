@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     gemini_price_in_per_m: float = 0.75
     gemini_price_out_per_m: float = 3.75
     gemini_replay: str | None = None
+    database_url: str = str(_BACKEND / "app.db")
+    maintenance: bool = False
+    env: str = "dev"
 
 
 settings = Settings()
