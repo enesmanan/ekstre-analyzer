@@ -1,0 +1,17 @@
+bank: generic
+version: 1
+detect:
+  any: []
+mask:
+  builtin: [iban, card_number, tckn, phone, email]
+  regex:
+    - name: name_line
+      pattern: '^(Sayın|Adı Soyadı)\s*:?\s*(.+)$'
+      group: 2
+    - name: address_block
+      pattern: '^(Adres|Adresi)\s*:?\s*(.+)$'
+      group: 2
+keep:
+  - 'İşlem Tarihi'
+  - 'Toplam'
+padding_pt: 1.0
