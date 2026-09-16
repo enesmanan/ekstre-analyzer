@@ -1,3 +1,6 @@
+# Local planning docs (kept on disk, not published)
+docs/
+
 # Secrets and local env
 .env
 .venv
