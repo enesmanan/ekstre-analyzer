@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -67,6 +68,7 @@ def create_app(
     application.state.database_path = db_path
     from app.api.body_limit import JsonBodyLimitMiddleware
     from app.api.statements import router as statements_router
+    from app.api.summary import router as summary_router
     from app.api.transactions import router as transactions_router
     from app.jobs import JobStore, mark_restart
 
@@ -75,6 +77,7 @@ def create_app(
     application.add_middleware(JsonBodyLimitMiddleware)
     application.state.jobs = JobStore()
     application.state.mark_restart = mark_restart
+    application.state.write_lock = asyncio.Lock()
 
     @application.get("/api/healthz")
     def healthz(request: Request) -> JSONResponse:
@@ -84,6 +87,7 @@ def create_app(
 
     application.include_router(statements_router, prefix="/api/v1")
     application.include_router(transactions_router, prefix="/api/v1")
+    application.include_router(summary_router, prefix="/api/v1")
 
     application.frontend(
         "/",

@@ -156,17 +156,25 @@ async def upload_statement(
     profile_header = request.headers.get("X-Statement-Profile") or None
     bank = await run_in_threadpool(_inspect, pdf_bytes, password, profile_header)
 
-    row = Statement(
-        user_id=user.id,
-        profile=bank,
-        uploaded_at=datetime.now(UTC).replace(tzinfo=None),
-        page_count=0,
-        masked_sha256=f"pending:{uuid4()}",
-        status="queued",
-    )
-    db.add(row)
-    db.commit()
-    db.refresh(row)
+    async with request.app.state.write_lock:
+        queued = db.scalar(
+            select(func.count())
+            .select_from(Statement)
+            .where(Statement.user_id == user.id, Statement.status == "queued")
+        )
+        if queued is not None and int(queued) >= BUSY_QUEUED:
+            raise ApiError(503, "busy", "Çok fazla bekleyen iş")
+        row = Statement(
+            user_id=user.id,
+            profile=bank,
+            uploaded_at=datetime.now(UTC).replace(tzinfo=None),
+            page_count=0,
+            masked_sha256=f"pending:{uuid4()}",
+            status="queued",
+        )
+        db.add(row)
+        db.commit()
+        db.refresh(row)
 
     request.app.state.jobs.entries[row.id] = PdfEntry(
         original=pdf_bytes,

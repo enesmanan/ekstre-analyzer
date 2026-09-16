@@ -16,7 +16,10 @@ def sqlite_url(path: Path | str) -> str:
 
 def make_engine(path: Path | str) -> Engine:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    engine = create_engine(sqlite_url(path), connect_args={"autocommit": False})
+    engine = create_engine(
+        sqlite_url(path),
+        connect_args={"autocommit": False, "check_same_thread": False, "timeout": 30.0},
+    )
 
     @event.listens_for(engine, "connect")
     def _set_pragmas(dbapi_connection, _connection_record) -> None:  # noqa: ANN001

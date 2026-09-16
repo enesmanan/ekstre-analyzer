@@ -13,7 +13,7 @@ import pymupdf
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from starlette.concurrency import run_in_threadpool
 
 from app.anonymizer.masker import PasswordRequired, ScannedPdf, WrongPassword, mask
@@ -90,10 +90,18 @@ def _fail(session: Session, row: Statement, code: str) -> None:
     session.commit()
 
 
+def _fail_id(factory: sessionmaker[Session], statement_id: int, code: str) -> None:
+    with factory() as session:
+        row = session.get(Statement, statement_id)
+        if row is None:
+            return
+        _fail(session, row, code)
+
+
 async def process_statement(app: object, statement_id: int) -> None:
     store: JobStore = app.state.jobs  # type: ignore[attr-defined]
     async with store.semaphore:
-        factory = app.state.session_factory  # type: ignore[attr-defined]
+        factory: sessionmaker[Session] = app.state.session_factory  # type: ignore[attr-defined]
         with factory() as session:
             row = session.get(Statement, statement_id)
             if row is None:
@@ -104,7 +112,6 @@ async def process_statement(app: object, statement_id: int) -> None:
                 return
             row.status = "masking"
             session.commit()
-
             original = entry.original
             password = entry.password
             profile_name = entry.profile_name
@@ -112,36 +119,39 @@ async def process_statement(app: object, statement_id: int) -> None:
             entry.original = None
             entry.password = None
 
-            profiles = load_all_profiles()
-            profile = profile_by_bank(profile_name, profiles) if profile_name else profiles[0]
+        profiles = load_all_profiles()
+        profile = profile_by_bank(profile_name, profiles) if profile_name else profiles[0]
 
-            def _run_mask() -> object:
-                return mask(original, profile, password)
+        def _run_mask() -> object:
+            return mask(original, profile, password)
 
-            try:
-                mask_result = await run_in_threadpool(_run_mask)
-            except LeakDetected:
-                _fail(session, row, "leak_detected")
-                return
-            except UnsafePdf:
-                _fail(session, row, "unsafe_pdf")
-                return
-            except ScannedPdf:
-                _fail(session, row, "scanned_pdf")
-                return
-            except PasswordRequired:
-                _fail(session, row, "password_required")
-                return
-            except WrongPassword:
-                _fail(session, row, "wrong_password")
-                return
-            except Exception:
-                _fail(session, row, "mask_failed")
-                return
+        try:
+            mask_result = await run_in_threadpool(_run_mask)
+        except LeakDetected:
+            _fail_id(factory, statement_id, "leak_detected")
+            return
+        except UnsafePdf:
+            _fail_id(factory, statement_id, "unsafe_pdf")
+            return
+        except ScannedPdf:
+            _fail_id(factory, statement_id, "scanned_pdf")
+            return
+        except PasswordRequired:
+            _fail_id(factory, statement_id, "password_required")
+            return
+        except WrongPassword:
+            _fail_id(factory, statement_id, "wrong_password")
+            return
+        except Exception:
+            _fail_id(factory, statement_id, "mask_failed")
+            return
 
+        entry = store.entries.get(statement_id)
+        if entry is not None:
             entry.masked = mask_result.pdf_bytes
             entry.expires_at = datetime.now(UTC).replace(tzinfo=None) + PREVIEW_TTL
 
+        with factory() as session:
             try:
                 session.execute(
                     update(Statement)
