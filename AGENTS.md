@@ -153,11 +153,9 @@ Tek cümle, İngilizce, lowercase, imperative, sonda nokta yok, ≤72 karakter. 
 | `fix neighbour line deletion with small glyph heights` | `bug fix` |
 | `wire advice box to overview page` | `phase 3.5 progress` |
 
-`git add -A` öncesi `git status` ile `tests/private/`, `tests/out/`, `.env` görünmediğini doğrula. Body yalnızca gerçekten gerekiyorsa. Footer:
+`git add -A` öncesi `git status` ile `tests/private/`, `tests/out/`, `.env` görünmediğini doğrula. Body yalnızca gerçekten gerekiyorsa.
 
-```
-Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
-```
+**Commit imzası yok.** Mesaja `Co-Authored-By`, `Made-with: Cursor`, `Signed-off-by` (agent için) veya Cursor/Claude/Copilot trailer'ı ekleme. Author git config'deki insan developer'dır.
 
 ### 7 · Check Definition of Done
 
@@ -261,6 +259,7 @@ Sorarken: bir paragraf context, sonuçlarıyla birlikte seçenekler ve **bir ön
 | `RecordedClient` yerine testte canlı Gemini | Kural 9 |
 | Aynı GCS replikasına iki Litestream sürecini bilerek çalıştırma; bakım bayrağı kapalıyken deploy | ADR-0004, ADR-0005 |
 | Bir ADR'yi yerinde düzenleme | Yeni ADR açılır, eskisi "yerini aldı" |
+| Commit'e Cursor/Claude/Copilot `Co-Authored-By` veya benzeri AI trailer ekleme | Author yalnızca insan developer; imza yok |
 
 ---
 
